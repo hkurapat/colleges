@@ -2,4 +2,41 @@
 title: "Colleges"
 author: "Harshil Kurapati"
 format: html
+execute:
+  echo: false
 ---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(primer.data)
+```
+
+```{r}
+colleges |>
+  ggplot(aes(x = tuition, y = grad_rate)) +
+  geom_point(alpha = 0.4) +
+  geom_smooth() +
+  labs(
+    title = "Graduation rate vs tuition for US colleges",
+    subtitle = "Higher tuition colleges tend to have higher graduation rates",
+    x = "Tuition ($10,000)",
+    y = "Graduation rate",
+    caption = "Source: IPEDS 2013 via primer.data::colleges"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| cache: true
+x <- colleges |>
+  select(tuition, grad_rate, selectivity) |>
+  filter(tuition > 2) |>
+  drop_na() |>
+  mutate(selectivity = factor(as.character(selectivity),
+                              levels = c("Elite", "Highly Selective",
+                                         "Moderately Selective",
+                                         "Lowly Selective", "Non-selective")))
+```
+
+Graduation rates vary widely across US colleges and are strongly associated with institutional tuition and selectivity. Using data from the Department of Education's 2013 IPEDS database we seek to estimate the difference in expected graduation rates between colleges with different tuition levels.
